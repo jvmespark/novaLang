@@ -6,7 +6,7 @@ static int chrpos(char *s, int c) {
   char *p;
 
   p = strchr(s, c);
-  return (p ? p - s : -1);
+  return p ? p - s : -1;
 }
 
 
@@ -16,13 +16,13 @@ static int next(void) {
   if (Putback) {		
     c = Putback;		
     Putback = 0;
-    return (c);
+    return c;
   }
 
   c = fgetc(Infile);		
   if ('\n' == c)
     Line++;			
-  return (c);
+  return c;
 }
 
 static void putback(int c) {
@@ -37,7 +37,7 @@ static int skip(void) {
   while (' ' == c || '\t' == c || '\n' == c || '\r' == c || '\f' == c) {
     c = next();
   }
-  return (c);
+  return c;
 }
 
 
@@ -52,7 +52,7 @@ static int scanint(int c) {
 
   
   putback(c);
-  return (val);
+  return val;
 }
 
 
@@ -73,7 +73,7 @@ static int scanident(int c, char *buf, int lim) {
   
   putback(c);
   buf[i] = '\0';
-  return (i);
+  return i;
 }
 
 
@@ -85,11 +85,11 @@ static int keyword(char *s) {
       break;
     case 'p':
       if (!strcmp(s, "print"))
-        return (T_PRINT);
+        return T_PRINT;
       break;
     case 'i':
       if (!strcmp(s, "int"))
-        return (T_INT);
+        return T_INT;
       if (!strcmp(s, "if"))
         return T_IF;
       break;
@@ -97,8 +97,12 @@ static int keyword(char *s) {
       if (!strcmp(s, "while"))
         return T_WHILE;
       break;
+    case 'f':
+      if (!strcmp(s, "for"))
+        return T_FOR;
+      break;
   }
-  return (0);
+  return 0;
 }
 
 
@@ -110,7 +114,7 @@ int scan(struct token *t) {
   switch (c) {
     case EOF:
       t->token = T_EOF;
-      return (0);
+      return 0;
     case '+':
       t->token = T_PLUS;
       break;
@@ -200,5 +204,5 @@ int scan(struct token *t) {
       exit(1);
   }
 
-  return (1);
+  return 1;
 }

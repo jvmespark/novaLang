@@ -1,4 +1,4 @@
-# Prose
+# novaLang
 
 ## Dependencies
 ```bash
@@ -8,7 +8,7 @@ sudo apt install make build-essential nasm
 
 ## Building and Installing
 ```bash
-git clone https://github.com/jvmespark/prose.git
-cd prose
+git clone https://github.com/jvmespark/novaLang.git
+cd novaLang
 make test
 ```

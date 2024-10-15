@@ -17,7 +17,7 @@ static int newglob() {
 
   if ((p = Globs++) >= NSYMBOLS)
     fatal("Too many global symbols");
-  return (p);
+  return p;
 }
 
 int addglob(char *name) {

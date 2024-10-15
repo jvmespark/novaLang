@@ -19,7 +19,7 @@ static int alloc_register(void) {
   for (int i = 0; i < 4; i++) {
     if (freereg[i]) {
       freereg[i] = 0;
-      return (i);
+      return i;
     }
   }
   fprintf(stderr, "Out of registers!\n");
@@ -70,28 +70,28 @@ int cgload(int value) {
   int r = alloc_register();
 
   fprintf(Outfile, "\tmov\t%s, %d\n", reglist[r], value);
-  return (r);
+  return r;
 }
 
 
 int cgadd(int r1, int r2) {
   fprintf(Outfile, "\tadd\t%s, %s\n", reglist[r2], reglist[r1]);
   free_register(r1);
-  return (r2);
+  return r2;
 }
 
 
 int cgsub(int r1, int r2) {
   fprintf(Outfile, "\tsub\t%s, %s\n", reglist[r1], reglist[r2]);
   free_register(r2);
-  return (r1);
+  return r1;
 }
 
 
 int cgmul(int r1, int r2) {
   fprintf(Outfile, "\timul\t%s, %s\n", reglist[r2], reglist[r1]);
   free_register(r1);
-  return (r2);
+  return r2;
 }
 
 
@@ -101,7 +101,7 @@ int cgdiv(int r1, int r2) {
   fprintf(Outfile, "\tidiv\t%s\n", reglist[r2]);
   fprintf(Outfile, "\tmov\t%s, rax\n", reglist[r1]);
   free_register(r2);
-  return (r1);
+  return r1;
 }
 
 
@@ -115,19 +115,19 @@ int cgloadint(int value) {
   int r = alloc_register();
 
   fprintf(Outfile, "\tmov\t%s, %d\n", reglist[r], value);
-  return (r);
+  return r;
 }
 
 int cgloadglob(char *identifier) {
   int r = alloc_register();
 
   fprintf(Outfile, "\tmov\t%s, [%s]\n", reglist[r], identifier);
-  return (r);
+  return r;
 }
 
 int cgstorglob(int r, char *identifier) {
   fprintf(Outfile, "\tmov\t[%s], %s\n", identifier, reglist[r]);
-  return (r);
+  return r;
 }
 
 void cgglobsym(char *sym) {
@@ -154,7 +154,7 @@ int cgcompare_and_set(int ASTop, int r1, int r2) {
   fprintf(Outfile, "\t%s\t%s\n", cmplist[ASTop - A_EQ], breglist[r2]);
   fprintf(Outfile, "\tmovzx\t%s, %s\n", reglist[r2], breglist[r2]);
   free_register(r1);
-  return (r2);
+  return r2;
 }
 
 int cgcompare_and_jump(int ASTop, int r1, int r2, int label) {
