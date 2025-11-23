@@ -1,5 +1,5 @@
 OBJS := $(wildcard src/*.c)
-OBJ_NAME = prose
+OBJ_NAME = nova
 
 ${OBJ_NAME}: ${OBJS}
 	gcc -o ${OBJ_NAME} -g ${OBJS}

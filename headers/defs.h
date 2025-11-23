@@ -42,11 +42,11 @@ struct ASTnode {
   struct ASTnode *right;
   union {
     int intvalue;
-    int id; // symbol slot id
+    int id;
   } v;	
 };
 
-#define NOREG   -1 // when there is no registers to return in AST generation
+#define NOREG   -1
 
 struct symTable {
   char *name;
