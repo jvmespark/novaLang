@@ -16,10 +16,12 @@ printint:
 	leave
 	ret
 
+	common	i 8:8
+	section	.text
+	global	main
 main:
 	push	rbp
 	mov	rbp, rsp
-	common	i 8:8
 	mov	r8, 1
 	mov	[i], r8
 L1:

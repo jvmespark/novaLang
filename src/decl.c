@@ -19,5 +19,5 @@ struct ASTnode *function_declaration(void) {
     lparen();
     rparen();
     tree = compound_statement();
-    return(mkastunary(A_FUNCTION, tree, nameslot));
+    return (mkastunary(A_FUNCTION, tree, nameslot));
 }

@@ -41,3 +41,8 @@ test: ${OBJ_NAME}
 	nasm -f elf64 out.s
 	gcc -no-pie -o out out.o -z noexecstack
 	./out
+
+	./${OBJ_NAME} tests/files/input08
+	nasm -f elf64 out.s
+	gcc -no-pie -o out out.o -z noexecstack
+	./out

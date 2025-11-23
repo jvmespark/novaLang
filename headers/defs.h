@@ -32,7 +32,8 @@ enum {
   A_LT, A_GT, A_LE, A_GE,
   A_INTLIT,
   A_LVIDENT, A_ASSIGN, A_IDENT, A_PRINT, 
-  A_GLUE, A_IF, A_WHILE
+  A_GLUE, A_IF, A_WHILE,
+  A_FUNCTION
 };
 
 
