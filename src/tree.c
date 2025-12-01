@@ -2,7 +2,7 @@
 #include "../headers/data.h"
 #include "../headers/decl.h"
 
-struct ASTnode *mkastnode(int op, struct ASTnode *left, struct ASTnode *mid, struct ASTnode *right, int intvalue) {
+struct ASTnode *mkastnode(int op, int type, truct ASTnode *left, struct ASTnode *mid, struct ASTnode *right, int intvalue) {
   struct ASTnode *n;
   
   n = (struct ASTnode *) malloc(sizeof(struct ASTnode));
@@ -10,6 +10,7 @@ struct ASTnode *mkastnode(int op, struct ASTnode *left, struct ASTnode *mid, str
     fatal("Unable to malloc in mkastnode()");
   
   n->op = op;
+  n->type = type;
   n->left = left;
   n->mid = mid;
   n->right = right;
@@ -17,10 +18,10 @@ struct ASTnode *mkastnode(int op, struct ASTnode *left, struct ASTnode *mid, str
   return n;
 }
 
-struct ASTnode *mkastleaf(int op, int intvalue) {
-  return mkastnode(op, NULL, NULL, NULL, intvalue);
+struct ASTnode *mkastleaf(int op, int type, int intvalue) {
+  return mkastnode(op, type, NULL, NULL, NULL, intvalue);
 }
 
-struct ASTnode *mkastunary(int op, struct ASTnode *left, int intvalue) {
-  return mkastnode(op, left, NULL, NULL, intvalue);
+struct ASTnode *mkastunary(int op, int type, struct ASTnode *left, int intvalue) {
+  return mkastnode(op, type, left, NULL, NULL, intvalue);
 }

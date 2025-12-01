@@ -2,11 +2,24 @@
 #include "../headers/data.h"
 #include "../headers/decl.h"
 
+int parse_type(int t) {
+    if (t == T_CHAR) {
+        return P_CHAR;
+    } if (t == T_INT) {
+        return P_INT;
+    } if (t == T_VOID) {
+        return P_VOID;
+    }
+    fatald("Illegal type, token", t);
+}
+
 void var_declaration() {
-    match(T_INT, "int");
+    int id, type;
+    type = parse_type(Token.token);
+    scan(&Token);
     ident();
-    addglob(Text);
-    genglobsym(Text);
+    id = addglob(Text, type, S_VARIABLE);
+    genglobsym(id);
     semi();
 }
 

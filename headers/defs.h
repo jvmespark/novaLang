@@ -36,9 +36,23 @@ enum {
   A_FUNCTION
 };
 
+enum {
+  P_NONE, P_VOID, P_CHAR, P_INT
+};
+
+enum {
+  S_VARIABLE, S_FUNCTION
+};
+
+struct symtable {
+  char *name;
+  int type;
+  int stype;
+};
 
 struct ASTnode {
   int op;			
+  int type;
   struct ASTnode *left;		
   struct ASTnode *mid;
   struct ASTnode *right;
