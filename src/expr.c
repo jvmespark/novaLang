@@ -11,7 +11,7 @@ static struct ASTnode *primary(void) {
       if ((Token.intvalue) >= 0 && (Token.intvalue < 256)) {
         n = mkastleaf(A_INTLIT, P_CHAR, Token.intvalue);
       } else {
-        n = mkastlead(A_INTLIT, P_INT, Token.intvalue);
+        n = mkastleaf(A_INTLIT, P_INT, Token.intvalue);
       }
       break;
     case T_IDENT:
@@ -79,7 +79,7 @@ struct ASTnode *binexpr(int ptp) {
     if (righttype) {
       right = mkastunary(righttype, left->type, right, 0);
     }
-    left = mkastnode(arithop(tokentype), left->type, NULL, right, 0);
+    left = mkastnode(arithop(tokentype), left->type, left, NULL, right, 0);
     tokentype = Token.token;
     if (tokentype == T_SEMI || tokentype == T_RPAREN)
       return left;

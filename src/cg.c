@@ -118,24 +118,39 @@ int cgloadint(int value) {
   return r;
 }
 
-int cgloadglob(char *identifier) {
+int cgloadglob(int id) {
   int r = alloc_register();
-
-  fprintf(Outfile, "\tmov\t%s, [%s]\n", reglist[r], identifier);
+  if (Gsym[id].type == P_INT) {
+    fprintf(Outfile, "\tmov\t%s, [%s]\n", reglist[r], Gsym[id].name);
+  } else {
+    fprintf(Outfile, "\tmovzx\t%s, byte [%s]\n", reglist[r], Gsym[id].name);
+  }
   return r;
 }
 
-int cgstorglob(int r, char *identifier) {
-  fprintf(Outfile, "\tmov\t[%s], %s\n", identifier, reglist[r]);
+int cgstorglob(int r, int id) {
+  if (Gsym[id].type == P_INT) {
+    fprintf(Outfile, "\tmov\t[%s], %s\n", Gsym[id].name, reglist[r]);
+  } else {
+    fprintf(Outfile, "\tmov\t[%s], %s\n", Gsym[id].name, breglist[r]);
+  }
   return r;
 }
 
-void cgglobsym(char *sym) {
-  fprintf(Outfile, "\tcommon\t%s 8:8\n", sym);
+void cgglobsym(int id) {
+  if (Gsym[id].type == P_INT) {
+    fprintf(Outfile, "\tcommon\t%s 8:8\n", Gsym[id].name);
+  } else {
+    fprintf(Outfile, "\tcommon\t%s 1:1\n", Gsym[id].name);
+  }
 }
 
-void genglobsym(char *s) {
-  cgglobsym(s);
+int cgwiden(int r, int oldtype, int newtype) {
+  return r;
+}
+
+void genglobsym(int id) {
+  cgglobsym(id);
 }
 
 void cglabel(int l) {

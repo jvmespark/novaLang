@@ -2,7 +2,7 @@
 #include "../headers/data.h"
 #include "../headers/decl.h"
 
-struct ASTnode *mkastnode(int op, int type, truct ASTnode *left, struct ASTnode *mid, struct ASTnode *right, int intvalue) {
+struct ASTnode *mkastnode(int op, int type, struct ASTnode *left, struct ASTnode *mid, struct ASTnode *right, int intvalue) {
   struct ASTnode *n;
   
   n = (struct ASTnode *) malloc(sizeof(struct ASTnode));

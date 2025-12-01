@@ -28,9 +28,9 @@ struct ASTnode *function_declaration(void) {
     int nameslot;
     match(T_VOID, "void");
     ident();
-    nameslot = addglob(Text);
+    nameslot = addglob(Text, P_VOID, S_FUNCTION);
     lparen();
     rparen();
     tree = compound_statement();
-    return (mkastunary(A_FUNCTION, tree, nameslot));
+    return mkastunary(A_FUNCTION, P_VOID, tree, nameslot);
 }

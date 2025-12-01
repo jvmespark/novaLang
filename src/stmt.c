@@ -14,7 +14,7 @@ static struct ASTnode *assignment_statement() {
     if ((id = findglob(Text)) == -1) {
       fatals("Undeclared Variable", Text);
     }
-    right = mkastleaf(A_LVIDENT, id);
+    right = mkastleaf(A_LVIDENT, Gsym[id].type, id);
     
     match(T_ASSIGN, "=");
 
@@ -27,7 +27,7 @@ static struct ASTnode *assignment_statement() {
     }
 
     if (lefttype) {
-      left =mkastunary(lefttype, right->type, left, 0);
+      left = mkastunary(lefttype, right->type, left, 0);
     }
     
     tree = mkastnode(A_ASSIGN, P_INT, left, NULL, right, 0);
@@ -51,7 +51,7 @@ static struct ASTnode *print_statement(void) {
   if (righttype) {
     tree = mkastunary(righttype, P_INT, tree, 0);
   }
-  tree = mkastunary(A_PRINT, tree, 0);
+  tree = mkastunary(A_PRINT, P_NONE, tree, 0);
   return tree;
 }
 
@@ -74,7 +74,7 @@ struct ASTnode *if_statement(void) {
     falseAST = compound_statement();
   }
 
-  return mkastnode(A_IF, condAST, trueAST, falseAST, 0);
+  return mkastnode(A_IF, P_NONE, condAST, trueAST, falseAST, 0);
 }
 
 struct ASTnode *while_statement(void) {
@@ -90,7 +90,7 @@ struct ASTnode *while_statement(void) {
 
   bodyAST = compound_statement();
 
-  return mkastnode(A_WHILE, condAST, NULL, bodyAST, 0);
+  return mkastnode(A_WHILE, P_NONE, condAST, NULL, bodyAST, 0);
 }
 
 struct ASTnode *for_statement(void) {
@@ -114,11 +114,11 @@ struct ASTnode *for_statement(void) {
 
   bodyAST = compound_statement();
 
-  tree = mkastnode(A_GLUE, bodyAST, NULL, postopAST, 0);
+  tree = mkastnode(A_GLUE, P_NONE, bodyAST, NULL, postopAST, 0);
 
-  tree = mkastnode(A_WHILE, condAST, NULL, tree, 0);
+  tree = mkastnode(A_WHILE, P_NONE, condAST, NULL, tree, 0);
 
-  return mkastnode(A_GLUE, preopAST, NULL, tree, 0);
+  return mkastnode(A_GLUE, P_NONE, preopAST, NULL, tree, 0);
 }
 
 struct ASTnode *single_statement(void) {
@@ -154,7 +154,7 @@ struct ASTnode *compound_statement(void) {
       if (left == NULL)
         left = tree;
       else
-        left = mkastnode(A_GLUE, left, NULL, tree, 0);
+        left = mkastnode(A_GLUE, P_NONE, left, NULL, tree, 0);
     }
 
     if (Token.token == T_RBRACE) {

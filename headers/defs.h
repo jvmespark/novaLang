@@ -15,8 +15,7 @@ enum {
   T_INTLIT, T_SEMI, T_ASSIGN, T_IDENT,
   T_LBRACE, T_RBRACE, T_LPAREN, T_RPAREN,
   T_PRINT, T_INT, T_IF, T_ELSE, T_WHILE,
-  T_FOR,
-  T_VOID
+  T_FOR, T_VOID, T_CHAR
 };
 
 
@@ -33,7 +32,7 @@ enum {
   A_INTLIT,
   A_LVIDENT, A_ASSIGN, A_IDENT, A_PRINT, 
   A_GLUE, A_IF, A_WHILE,
-  A_FUNCTION
+  A_FUNCTION, A_WIDEN
 };
 
 enum {
@@ -42,12 +41,6 @@ enum {
 
 enum {
   S_VARIABLE, S_FUNCTION
-};
-
-struct symtable {
-  char *name;
-  int type;
-  int stype;
 };
 
 struct ASTnode {
@@ -66,4 +59,6 @@ struct ASTnode {
 
 struct symTable {
   char *name;
+  int type;
+  int stype;
 };
