@@ -6,6 +6,7 @@ static struct ASTnode *single_statement(void);
 
 static struct ASTnode *assignment_statement() {
     struct ASTnode *left, *right, *tree;
+    int lefttype, righttype;
     int id;
 
     ident();
@@ -18,19 +19,38 @@ static struct ASTnode *assignment_statement() {
     match(T_ASSIGN, "=");
 
     left = binexpr(0);
+
+    lefttype = left->type;
+    righttype = right->type;
+    if (!type_compatible(&lefttype, &righttype, 1)) {
+      fatal("Incompatible types");
+    }
+
+    if (lefttype) {
+      left =mkastunary(lefttype, right->type, left, 0);
+    }
     
-    tree = mkastnode(A_ASSIGN, left, NULL, right, 0);
+    tree = mkastnode(A_ASSIGN, P_INT, left, NULL, right, 0);
 
     return tree;
 }
 
 static struct ASTnode *print_statement(void) {
   struct ASTnode *tree;
+  int lefttype, righttype;
   int reg;
 
   match(T_PRINT, "print");
 
   tree = binexpr(0);
+  lefttype = P_INT;
+  righttype = tree->type;
+  if (!type_compatible(&lefttype, &righttype, 0)) {
+    fatal("Incompatible types");
+  }
+  if (righttype) {
+    tree = mkastunary(righttype, P_INT, tree, 0);
+  }
   tree = mkastunary(A_PRINT, tree, 0);
   return tree;
 }

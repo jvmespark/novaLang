@@ -8,13 +8,17 @@ static struct ASTnode *primary(void) {
 
   switch (Token.token) {
     case T_INTLIT:
-      n = mkastleaf(A_INTLIT, Token.intvalue);
+      if ((Token.intvalue) >= 0 && (Token.intvalue < 256)) {
+        n = mkastleaf(A_INTLIT, P_CHAR, Token.intvalue);
+      } else {
+        n = mkastlead(A_INTLIT, P_INT, Token.intvalue);
+      }
       break;
     case T_IDENT:
       id = findglob(Text);
       if (id == -1)
         fatals("Unknown variable", Text);
-      n = mkastleaf(A_IDENT, id);
+      n = mkastleaf(A_IDENT, Gsym[id].type, id);
       break;
     default:
       fatald("Syntax error, token", Token.token);
@@ -52,6 +56,7 @@ static int op_precedence(int tokentype) {
 
 struct ASTnode *binexpr(int ptp) {
   struct ASTnode *left, *right;
+  int lefttype, righttype;
   int tokentype;
 
   left = primary();
@@ -62,8 +67,19 @@ struct ASTnode *binexpr(int ptp) {
 
   while (op_precedence(tokentype) > ptp) {
     scan(&Token);
-    right = binexpr(OpPrec[tokentype]);    
-    left = mkastnode(arithop(tokentype), left, NULL, right, 0);
+    right = binexpr(OpPrec[tokentype]);
+    lefttype = left->type;
+    righttype = right->type;
+    if (!type_compatible(&lefttype, &righttype, 0)) {
+      fatal("Incompatible types");
+    }
+    if (lefttype) {
+      left = mkastunary(lefttype, right->type, left, 0);
+    }
+    if (righttype) {
+      right = mkastunary(righttype, left->type, right, 0);
+    }
+    left = mkastnode(arithop(tokentype), left->type, NULL, right, 0);
     tokentype = Token.token;
     if (tokentype == T_SEMI || tokentype == T_RPAREN)
       return left;
