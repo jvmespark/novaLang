@@ -1,5 +1,5 @@
 OBJS := $(wildcard src/*.c)
-OBJ_NAME = prose
+OBJ_NAME = nova
 
 ${OBJ_NAME}: ${OBJS}
 	gcc -o ${OBJ_NAME} -g ${OBJS}
@@ -38,6 +38,11 @@ test: ${OBJ_NAME}
 	./out
 
 	./${OBJ_NAME} tests/files/input07
+	nasm -f elf64 out.s
+	gcc -no-pie -o out out.o -z noexecstack
+	./out
+
+	./${OBJ_NAME} tests/files/input08
 	nasm -f elf64 out.s
 	gcc -no-pie -o out out.o -z noexecstack
 	./out

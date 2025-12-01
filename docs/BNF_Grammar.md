@@ -22,3 +22,5 @@
  if_head: 'if' '(' true_false_expression ')' compound_statement  ;
 
  identifier: T_IDENT ;
+
+  function_declaration: 'void' identifier '(' ')' compound_statement   ;

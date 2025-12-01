@@ -35,7 +35,6 @@ static void free_register(int reg) {
   freereg[reg] = 1;
 }
 
-
 void cgpreamble() {
   freeall_registers();
   fputs("\tglobal\tmain\n"
@@ -51,19 +50,20 @@ void cgpreamble() {
 	"\tmov\tesi, eax\n"
 	"\tlea	rdi, [rel LC0]\n"
 	"\tmov	eax, 0\n"
-	"\tcall	printf\n"
-	"\tnop\n"
-	"\tleave\n"
-	"\tret\n"
-	"\n"
-	"main:\n" "\tpush\trbp\n" "\tmov	rbp, rsp\n", Outfile);
+	"\tcall	printf\n" "\tnop\n" "\tleave\n" "\tret\n" "\n", Outfile);
 }
 
+void cgfuncpreamble(char *name) {
+  fprintf(Outfile,
+	  "\tsection\t.text\n"
+	  "\tglobal\t%s\n"
+	  "%s:\n" "\tpush\trbp\n"
+	  "\tmov\trbp, rsp\n", name, name);
+}
 
-void cgpostamble() {
+void cgfuncpostamble() {
   fputs("\tmov	eax, 0\n" "\tpop	rbp\n" "\tret\n", Outfile);
 }
-
 
 
 int cgload(int value) {
