@@ -1,4 +1,4 @@
-OBJS := $(wildcard src/*.c)
+OBJS := $(wildcard src/*.c lib/*.c)
 OBJ_NAME = nova
 
 ${OBJ_NAME}: ${OBJS}

@@ -67,7 +67,7 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
     case A_FUNCTION:
       cgfuncpreamble(Gsym[n->v.id].name);
       genAST(n->left, NOREG, n->op);
-      cgfuncpostamble();
+      cgfuncpostamble(n->v.id);
       return (NOREG);
   }
   
@@ -100,16 +100,22 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
     case A_INTLIT:
       return (cgloadint(n->v.intvalue));
     case A_IDENT:
-      return (cgloadglob(Gsym[n->v.id].name));
+      return (cgloadglob(n->v.id));
     case A_LVIDENT:
-      return (cgstorglob(reg, Gsym[n->v.id].name));
+      return (cgstorglob(reg, n->v.id));
     case A_ASSIGN:
       return (rightreg);
     case A_PRINT:
       genprintint(leftreg);
       genfreeregs();
       return (NOREG);
-
+    case A_WIDEN:
+      return cgwiden(leftreg, n->left->type, n->type);
+    case A_RETURN:
+      cgreturn(leftreg, Functionid);
+      return NOREG;
+    case A_FUNCCALL:
+      return cgcall(leftreg, n->v.id);
     default:
       fatald("Unknown AST operator", n->op);
   }
@@ -123,4 +129,11 @@ void genfreeregs() {
 }
 void genprintint(int reg) {
   cgprintint(reg);
+}
+int genlabel(void) {
+  static int id = 1;
+  return id++;
+}
+int genprimsize(int type) {
+  return cgprimsize(type);
 }
