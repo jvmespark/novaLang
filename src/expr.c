@@ -15,7 +15,7 @@ static struct ASTnode *primary(void) {
       }
       break;
     case T_IDENT:
-      case(&Token);
+      scan(&Token);
       if (Token.token == T_LPAREN) {
         return funccall();
       }

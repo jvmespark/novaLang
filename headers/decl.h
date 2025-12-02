@@ -6,6 +6,7 @@ struct ASTnode *mkastleaf(int op, int type, int intvalue);
 struct ASTnode *mkastunary(int op, int type, struct ASTnode *left, int intvalue);
 
 // gen.c
+int genlabel(void);
 static int label(void);
 static int genIFAST(struct ASTnode *n);
 int genAST(struct ASTnode *n, int reg, int parentASTop);
@@ -15,12 +16,13 @@ void genpostamble();
 void genfreeregs();
 void genprintint(int reg);
 void genglobsym(int id);
+int genprimsize(int type);
 
 // cg.c
 void freeall_registers(void);
 void cgpreamble();
 void cgfuncpreamble(char *name);
-void cgfuncpostamble();
+void cgfuncpostamble(int id);
 int cgloadint(int value);
 int cgloadglob(int identifier);
 int cgadd(int r1, int r2);
@@ -64,7 +66,7 @@ void fatalc(char *s, int c);
 
 // sym.c
 int findglob(char *s);
-int addglob(char *name, int type, int stype);
+int addglob(char *name, int type, int stype, int endlabel);
 
 // decl.c
 void var_declaration(void);

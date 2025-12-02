@@ -15,7 +15,7 @@ enum {
   T_INTLIT, T_SEMI, T_ASSIGN, T_IDENT,
   T_LBRACE, T_RBRACE, T_LPAREN, T_RPAREN,
   T_PRINT, T_INT, T_IF, T_ELSE, T_WHILE,
-  T_FOR, T_VOID, T_CHAR
+  T_FOR, T_VOID, T_CHAR, T_RETURN
 };
 
 
@@ -36,7 +36,7 @@ enum {
 };
 
 enum {
-  P_NONE, P_VOID, P_CHAR, P_INT
+  P_NONE, P_VOID, P_CHAR, P_INT, P_LONG
 };
 
 enum {
@@ -61,4 +61,5 @@ struct symTable {
   char *name;
   int type;
   int stype;
+  int endlabel;
 };

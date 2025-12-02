@@ -18,14 +18,14 @@ void var_declaration() {
     type = parse_type(Token.token);
     scan(&Token);
     ident();
-    id = addglob(Text, type, S_VARIABLE);
+    id = addglob(Text, type, S_VARIABLE, 0);
     genglobsym(id);
     semi();
 }
 
 struct ASTnode *function_declaration(void) {
     struct ASTnode *tree, *finalstmt;
-    int nameslot;
+    int nameslot, type, endlabel;
 
     type = parse_type(Token.token);
     scan(&Token);

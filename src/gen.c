@@ -67,7 +67,7 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
     case A_FUNCTION:
       cgfuncpreamble(Gsym[n->v.id].name);
       genAST(n->left, NOREG, n->op);
-      cgfuncpostamble();
+      cgfuncpostamble(n->v.id);
       return (NOREG);
   }
   
@@ -113,7 +113,7 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
       return cgwiden(leftreg, n->left->type, n->type);
     case A_RETURN:
       cgreturn(leftreg, Functionid);
-      return NO_REG;
+      return NOREG;
     case A_FUNCCALL:
       return cgcall(leftreg, n->v.id);
     default:
@@ -129,4 +129,11 @@ void genfreeregs() {
 }
 void genprintint(int reg) {
   cgprintint(reg);
+}
+int genlabel(void) {
+  static int id = 1;
+  return id++;
+}
+int genprimsize(int type) {
+  return cgprimsize(type);
 }

@@ -62,7 +62,7 @@ void cgfuncpreamble(char *name) {
 	  "\tmov\trbp, rsp\n", name, name);
 }
 
-void cgfuncpostamble() {
+void cgfuncpostamble(int id) {
   cglabel(Gsym[id].endlabel);
   fputs("\tpop	rbp\n" "\tret\n", Outfile);
 }
@@ -161,7 +161,7 @@ int cgstorglob(int r, int id) {
 
 void cgglobsym(int id) {
   int typesize;
-  typesize = cgprimesize(Gsym[id].type);
+  typesize = cgprimsize(Gsym[id].type);
   fprintf(Outfile, "\tcommon\t%s %d:%d\n", Gsym[id].name, typesize, typesize);
 }
 
