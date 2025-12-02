@@ -3,27 +3,35 @@
 #include "../headers/decl.h"
 
 int type_compatible(int *left, int *right, int onlyright) {
-  if ((*left == P_VOID) || (*right == P_VOID)) {
-    return 0;
-  } if (*left == *right) {
-    *left = *right = 0;
-    return 1;
-  }
+    int leftsize, rightsize;
 
-  if ((*left == P_CHAR) && (*right == P_INT)) {
-    *left = A_WIDEN;
-    *right = 0;
-    return 1;
-  }
-  if ((*left == P_INT) && (*right == P_CHAR)) {
-    if (onlyright) {
+    if (*left == *right) {
+        *left = *right = 0;
+        return 1;
+    }
+
+    leftsize = genprimsize(*left);
+    rightsize = genprimsize(*right);
+
+    if ((leftsize == 0) || (rightsize == 0)) {
         return 0;
     }
-    *left = 0;
-    *right = A_WIDEN;
-    return 1;
-  }
 
-  *left = *right = 0;
-  return 1;
+    if (leftsize < rightsize) {
+        *left = A_WIDEN;
+        *right = 0;
+        return 1;
+    }
+
+    if (rightsize < leftsize) {
+        if (onlyright) {
+            return 0;
+        }
+        *left = 0;
+        *right = A_WIDEN;
+        return 1;
+    }
+
+    *left = *right = 0;
+    return 1;
 }

@@ -24,13 +24,27 @@ void var_declaration() {
 }
 
 struct ASTnode *function_declaration(void) {
-    struct ASTnode *tree;
+    struct ASTnode *tree, *finalstmt;
     int nameslot;
-    match(T_VOID, "void");
+
+    type = parse_type(Token.token);
+    scan(&Token);
     ident();
-    nameslot = addglob(Text, P_VOID, S_FUNCTION);
+
+    endlabel = genlabel();
+    nameslot = addglob(Text, type, S_FUNCTION, endlabel);
+    Functionid = nameslot;
+
     lparen();
     rparen();
+
     tree = compound_statement();
-    return mkastunary(A_FUNCTION, P_VOID, tree, nameslot);
+
+    if (type != P_VOID) {
+        finalstmt = (tree->op == A_GLUE) ? tree->right : tree;
+        if (finalstmt == NULL || finalstmt->op != A_RETURN) {
+            fatal("No return for function with non-void type");
+        }
+    }
+    return mkastunary(A_FUNCTION, type, tree, nameslot);
 }

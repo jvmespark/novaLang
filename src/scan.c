@@ -109,9 +109,24 @@ static int keyword(char *s) {
   return 0;
 }
 
+static struct token *RejectToken = NULL;
+
+void reject_token(struct token *t) {
+  if (RejectToken != NULL) {
+    fatal("Can't reject token twice");
+  }
+  RejectToken = t;
+}
+
 
 int scan(struct token *t) {
   int c, tokentype;
+
+  if (RejectToken != NULL) {
+    t = RejectToken;
+    RejectToken = NULL;
+    return 1;
+  }
 
   c = skip();
 

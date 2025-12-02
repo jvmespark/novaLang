@@ -10,6 +10,10 @@ static struct ASTnode *assignment_statement() {
     int id;
 
     ident();
+
+    if (Token.token == T_LPAREN) {
+      return funccall();
+    }
     
     if ((id = findglob(Text)) == -1) {
       fatals("Undeclared Variable", Text);
@@ -162,4 +166,33 @@ struct ASTnode *compound_statement(void) {
       return left;
     }
   }
+}
+
+static struct ASTnode *return_statement(void) {
+  struct ASTnode *tree;
+  int returntype, functype;
+
+  if (Gsym[Functionid].type == P_VOID) {
+    fatal("Can't return from a void function");
+  }
+
+  match(T_RETURN, "return");
+  lparen();
+
+  tree = binexpr(0);
+
+  returntype = tree->type;
+  functype = Gsym[Functionid].type;
+  if (!type_compatible(&returntype, &functype, 1)) {
+    fatal("Incompatible types");
+  }
+
+  if (returntype) {
+    tree = mkastunary(returntype, functype, tree, 0);
+  }
+
+  tree = mkastunary(A_RETURN, P_NONE, tree, 0);
+
+  rparen();
+  return tree;
 }

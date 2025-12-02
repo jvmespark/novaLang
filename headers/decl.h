@@ -37,11 +37,17 @@ int cgcompare_and_set(int ASTop, int r1, int r2);
 int cgcompare_and_jump(int ASTop, int r1, int r2, int label);
 int cgwiden(int r, int oldtype, int newtype);
 
+int cgcall(int r, int id);
+int cgprimsize(int type);
+void cgreturn(int reg, int id);
+
 // expr.c
 struct ASTnode *binexpr(int ptp);
+struct ASTnode *funccall(void);
 
 // stmt.c
 struct ASTnode *compound_statement(void);
+static struct ASTnode *return_statement(void);
 
 // misc.c
 void match(int t, char *what);
@@ -65,3 +71,5 @@ void var_declaration(void);
 struct ASTnode *function_declaration(void);
 
 int type_compatible(int *left, int *right, int onlyright);
+
+void reject_token(struct token *t);
