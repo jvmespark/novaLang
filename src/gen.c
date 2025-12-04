@@ -85,7 +85,6 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
       return cgmul(leftreg, rightreg);
     case A_DIVIDE:
       return cgdiv(leftreg, rightreg);
-
     case A_EQ:
     case A_NE:
     case A_LT:
@@ -96,7 +95,6 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
         return cgcompare_and_jump(n->op, leftreg, rightreg, reg);
       else
         return cgcompare_and_set(n->op, leftreg, rightreg);
-
     case A_INTLIT:
       return (cgloadint(n->v.intvalue));
     case A_IDENT:
@@ -116,6 +114,10 @@ int genAST(struct ASTnode *n, int reg, int parentASTop) {
       return NOREG;
     case A_FUNCCALL:
       return cgcall(leftreg, n->v.id);
+    case A_ADDR:
+      return cgaddress(n->v.id);
+    case A_DEREF:
+      return cgderef(leftreg, n->left->type);
     default:
       fatald("Unknown AST operator", n->op);
   }

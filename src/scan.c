@@ -200,6 +200,14 @@ int scan(struct token *t) {
         t->token = T_GT;
       }
       break;
+    case '&':
+      if ((c == next()) == '&') {
+        t->token = T_LOGAND;
+      } else {
+        putback(c);
+        t->token = T_AMPER;
+      }
+      break;
     default:
       if (isdigit(c)) {
         t->intvalue = scanint(c);

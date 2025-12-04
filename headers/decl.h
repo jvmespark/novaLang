@@ -43,6 +43,9 @@ int cgcall(int r, int id);
 int cgprimsize(int type);
 void cgreturn(int reg, int id);
 
+int cgaddress(int id);
+int cgderef(int r, int type);
+
 // expr.c
 struct ASTnode *binexpr(int ptp);
 struct ASTnode *funccall(void);
@@ -73,5 +76,7 @@ void var_declaration(void);
 struct ASTnode *function_declaration(void);
 
 int type_compatible(int *left, int *right, int onlyright);
+int pointer_to(int type);
+int value_at(int type);
 
 void reject_token(struct token *t);

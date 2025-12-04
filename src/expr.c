@@ -33,6 +33,31 @@ static struct ASTnode *primary(void) {
   return n;
 }
 
+struct ASTnode *prefix() {
+  struct ASTnode *tree;
+  switch (Token.token) {
+    case T_AMPER:
+      scan(&Token);
+      tree = prefix();
+      if (tree->op != A_IDENT) {
+        fatal("& op must be followed by an identifier");
+      }
+      tree->op = A_ADDR;
+      tree->type = pointer_to(tree->type);
+      break;
+    case T_STAR:
+      scan(&Token);
+      tree = prefix();
+      if (tree->op != A_IDENT && tree->op != A_DEREF) {
+        fatal("* op must be followed by an identifier or *");
+      }
+      tree = mkastunary(A_DEREF, value_at(tree->type), tree, 0);
+      break;
+    default:
+      tree = primary();
+  }
+  return tree;
+}
 
 
 static int arithop(int tokentype) {
@@ -65,7 +90,7 @@ struct ASTnode *binexpr(int ptp) {
   int lefttype, righttype;
   int tokentype;
 
-  left = primary();
+  left = prefix();
   tokentype = Token.token;
 
   if (tokentype == T_SEMI || tokentype == T_RPAREN)

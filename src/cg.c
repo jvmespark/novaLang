@@ -236,3 +236,24 @@ void cgreturn(int reg, int id) {
   }
   cgjump(Gsym[id].endlabel);
 }
+
+int cgaddress(int id) {
+  int r = alloc_register();
+  fprintf(Outfile, "\tmov\t%s, %s\n", reglist[r], Gsym[id].name);
+  return r;
+}
+
+int cgderef(int r, int type) {
+  switch (type) {
+    case P_CHARPTR:
+      fprintf(Outfile, "\tmovezx\t%s, bytes [%s]\n", reglist[r], reglist[r]);
+      break;
+    case P_INTPTR:
+      fprintf(Outfile, "\tmovzx%s, word [%s]\n", reglist[r], reglist[r]);
+      break;
+    case P_LONGPTR:
+      fprintf(Outfile, "\tmove\t%s, [%s]\n", reglist[r], reglist[r]);
+      break;
+  }
+  return r;
+}
