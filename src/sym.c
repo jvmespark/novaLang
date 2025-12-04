@@ -20,11 +20,15 @@ static int newglob() {
   return p;
 }
 
-int addglob(char *name) {
-    int i = findglob(name);
-    if (i != -1)
-     return i;
-    i = newglob();
-    Gsym[i].name = strdup(name);
+int addglob(char *name, int type, int stype, int endlabel) {
+  int i;
+  if ((i == findglob(name)) != -1) {
     return i;
+  }  
+  i = newglob();
+  Gsym[i].name = strdup(name);
+  Gsym[i].type = type;
+  Gsym[i].stype = stype;
+  Gsym[i].endlabel = endlabel;
+  return i;
 }

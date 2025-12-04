@@ -6,32 +6,56 @@ static struct ASTnode *single_statement(void);
 
 static struct ASTnode *assignment_statement() {
     struct ASTnode *left, *right, *tree;
+    int lefttype, righttype;
     int id;
 
     ident();
+
+    if (Token.token == T_LPAREN) {
+      return funccall();
+    }
     
     if ((id = findglob(Text)) == -1) {
       fatals("Undeclared Variable", Text);
     }
-    right = mkastleaf(A_LVIDENT, id);
+    right = mkastleaf(A_LVIDENT, Gsym[id].type, id);
     
     match(T_ASSIGN, "=");
 
     left = binexpr(0);
+
+    lefttype = left->type;
+    righttype = right->type;
+    if (!type_compatible(&lefttype, &righttype, 1)) {
+      fatal("Incompatible types");
+    }
+
+    if (lefttype) {
+      left = mkastunary(lefttype, right->type, left, 0);
+    }
     
-    tree = mkastnode(A_ASSIGN, left, NULL, right, 0);
+    tree = mkastnode(A_ASSIGN, P_INT, left, NULL, right, 0);
 
     return tree;
 }
 
 static struct ASTnode *print_statement(void) {
   struct ASTnode *tree;
+  int lefttype, righttype;
   int reg;
 
   match(T_PRINT, "print");
 
   tree = binexpr(0);
-  tree = mkastunary(A_PRINT, tree, 0);
+  lefttype = P_INT;
+  righttype = tree->type;
+  if (!type_compatible(&lefttype, &righttype, 0)) {
+    fatal("Incompatible types");
+  }
+  if (righttype) {
+    tree = mkastunary(righttype, P_INT, tree, 0);
+  }
+  tree = mkastunary(A_PRINT, P_NONE, tree, 0);
   return tree;
 }
 
@@ -54,7 +78,7 @@ struct ASTnode *if_statement(void) {
     falseAST = compound_statement();
   }
 
-  return mkastnode(A_IF, condAST, trueAST, falseAST, 0);
+  return mkastnode(A_IF, P_NONE, condAST, trueAST, falseAST, 0);
 }
 
 struct ASTnode *while_statement(void) {
@@ -70,7 +94,7 @@ struct ASTnode *while_statement(void) {
 
   bodyAST = compound_statement();
 
-  return mkastnode(A_WHILE, condAST, NULL, bodyAST, 0);
+  return mkastnode(A_WHILE, P_NONE, condAST, NULL, bodyAST, 0);
 }
 
 struct ASTnode *for_statement(void) {
@@ -94,11 +118,11 @@ struct ASTnode *for_statement(void) {
 
   bodyAST = compound_statement();
 
-  tree = mkastnode(A_GLUE, bodyAST, NULL, postopAST, 0);
+  tree = mkastnode(A_GLUE, P_NONE, bodyAST, NULL, postopAST, 0);
 
-  tree = mkastnode(A_WHILE, condAST, NULL, tree, 0);
+  tree = mkastnode(A_WHILE, P_NONE, condAST, NULL, tree, 0);
 
-  return mkastnode(A_GLUE, preopAST, NULL, tree, 0);
+  return mkastnode(A_GLUE, P_NONE, preopAST, NULL, tree, 0);
 }
 
 struct ASTnode *single_statement(void) {
@@ -134,7 +158,7 @@ struct ASTnode *compound_statement(void) {
       if (left == NULL)
         left = tree;
       else
-        left = mkastnode(A_GLUE, left, NULL, tree, 0);
+        left = mkastnode(A_GLUE, P_NONE, left, NULL, tree, 0);
     }
 
     if (Token.token == T_RBRACE) {
@@ -142,4 +166,33 @@ struct ASTnode *compound_statement(void) {
       return left;
     }
   }
+}
+
+static struct ASTnode *return_statement(void) {
+  struct ASTnode *tree;
+  int returntype, functype;
+
+  if (Gsym[Functionid].type == P_VOID) {
+    fatal("Can't return from a void function");
+  }
+
+  match(T_RETURN, "return");
+  lparen();
+
+  tree = binexpr(0);
+
+  returntype = tree->type;
+  functype = Gsym[Functionid].type;
+  if (!type_compatible(&returntype, &functype, 1)) {
+    fatal("Incompatible types");
+  }
+
+  if (returntype) {
+    tree = mkastunary(returntype, functype, tree, 0);
+  }
+
+  tree = mkastunary(A_RETURN, P_NONE, tree, 0);
+
+  rparen();
+  return tree;
 }
