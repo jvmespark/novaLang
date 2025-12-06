@@ -11,3 +11,4 @@ extern_ char Text[TEXTLEN + 1];
 #define NSYMBOLS    1024
 extern_ struct symTable Gsym[NSYMBOLS]; //global symbol table
 static int glob = 0; // global symbol slot
+extern_ int Functionid;

@@ -1,0 +1,12 @@
+int asd() {
+  return(20);
+}
+
+void main() {
+  int result;
+  printint(10);
+  result = asd(15);
+  printint(result);
+  printint(asd(15)+10);
+  return(0);
+}

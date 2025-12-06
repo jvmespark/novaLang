@@ -109,9 +109,24 @@ static int keyword(char *s) {
   return 0;
 }
 
+static struct token *RejectToken = NULL;
+
+void reject_token(struct token *t) {
+  if (RejectToken != NULL) {
+    fatal("Can't reject token twice");
+  }
+  RejectToken = t;
+}
+
 
 int scan(struct token *t) {
   int c, tokentype;
+
+  if (RejectToken != NULL) {
+    t = RejectToken;
+    RejectToken = NULL;
+    return 1;
+  }
 
   c = skip();
 
@@ -145,6 +160,9 @@ int scan(struct token *t) {
       break;
     case ')':
       t->token = T_RPAREN;
+      break;
+    case ',':
+      t->token = T_COMMA;
       break;
     case '=':
       c = next();
@@ -183,6 +201,14 @@ int scan(struct token *t) {
       else {
         putback(c);
         t->token = T_GT;
+      }
+      break;
+    case '&':
+      if ((c == next()) == '&') {
+        t->token = T_LOGAND;
+      } else {
+        putback(c);
+        t->token = T_AMPER;
       }
       break;
     default:
