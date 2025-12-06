@@ -52,31 +52,30 @@ void var_declaration(int type) {
     }
 }
 
-struct ASTnode *function_declaration() {
-    struct ASTnode *tree, *finalstmt;
-    int nameslot, type, endlabel;
+struct ASTnode *function_declaration(int type) {
+  struct ASTnode *tree, *finalstmt;
+  int nameslot, endlabel;
 
-    type = parse_type(Token.token);
-    scan(&Token);
-    ident();
+  endlabel = genlabel();
+  nameslot = addglob(Text, type, S_FUNCTION, endlabel);
+  Functionid = nameslot;
 
-    endlabel = genlabel();
-    nameslot = addglob(Text, type, S_FUNCTION, endlabel);
-    Functionid = nameslot;
+  lparen();
+  rparen();
 
-    lparen();
-    rparen();
+  tree = compound_statement();
 
-    tree = compound_statement();
+  if (type != P_VOID) {
+    if (tree == NULL)
+      fatal("No statements in function with non-void type");
 
-    if (type != P_VOID) {
-        finalstmt = (tree->op == A_GLUE) ? tree->right : tree;
-        if (finalstmt == NULL || finalstmt->op != A_RETURN) {
-            fatal("No return for function with non-void type");
-        }
-    }
-    return mkastunary(A_FUNCTION, type, tree, nameslot);
+    finalstmt = (tree->op == A_GLUE) ? tree->right : tree;
+    if (finalstmt == NULL || finalstmt->op != A_RETURN)
+      fatal("No return for function with non-void type");
+  }
+  return (mkastunary(A_FUNCTION, type, tree, nameslot));
 }
+
 
 void global_declarations() {
     struct ASTnode *tree;

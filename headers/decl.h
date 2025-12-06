@@ -74,7 +74,7 @@ int addglob(char *name, int type, int stype, int endlabel);
 
 // decl.c
 void var_declaration(int type);
-struct ASTnode *function_declaration();
+struct ASTnode *function_declaration(int type);
 void global_declarations();
 int parse_type();
 
