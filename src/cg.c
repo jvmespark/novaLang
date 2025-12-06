@@ -257,3 +257,5 @@ int cgderef(int r, int type) {
   }
   return r;
 }
+
+void cgpostamble() {}

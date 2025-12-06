@@ -32,13 +32,24 @@ int parse_type() {
     return type;
 }
 
-void var_declaration() {
-    int id, type;
-    type = parse_type();
-    ident();
-    id = addglob(Text, type, S_VARIABLE, 0);
-    genglobsym(id);
-    semi();
+void var_declaration(int type) {
+    int id;
+    while (1) {
+        id = addglob(Text, type, S_VARIABLE, 0);
+        genglobsym(id);
+        if (Token.token == T_SEMI) {
+            scan(&Token);
+            return;
+        }
+        else if (Token.token == T_COMMA) {
+            scan(&Token);
+            ident();
+            continue;
+        }
+        else {
+            fatald("Unexpected token in global variable declaration", Token.token);
+        }
+    }
 }
 
 struct ASTnode *function_declaration() {
@@ -65,4 +76,23 @@ struct ASTnode *function_declaration() {
         }
     }
     return mkastunary(A_FUNCTION, type, tree, nameslot);
+}
+
+void global_declarations() {
+    struct ASTnode *tree;
+    int type;
+
+    while (1) {
+        type = parse_type();
+        ident();
+        if (Token.token == T_LPAREN) {
+            tree = function_declaration(type);
+            genAST(tree, NOREG, 0);
+        } else {
+            var_declaration(type);
+        }
+        if (Token.token == T_EOF) {
+            break;
+        }
+    }
 }
